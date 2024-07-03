@@ -1,0 +1,29 @@
+[package]
+name = "nats-demo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nats = "0.10"
+chrono = { version = "0.4.38", features = ["serde"] }
+consensus-types = { git = "https://github.com/sigp/lighthouse.git", branch = "stable", package = "types" }
+ethereum_ssz = "0.5.4"
+ethereum_ssz_derive = "0.5.4"
+test_random_derive = { git = "https://github.com/sigp/lighthouse.git", branch = "stable", package = "test_random_derive" }
+rand = "0.8.5"
+tokio = { version = "1", features = ["full"] }
+diesel = { version = "2.0.0", features = ["postgres", "chrono", "numeric"] }
+bigdecimal = { version = "0.4.5" }
+diesel_migrations = "2.2.0"
+
+[lib]
+name = "nats_demo"
+path = "src/lib.rs"
+
+[[bin]]
+name = "producer"
+path = "src/producer.rs"
+
+[[bin]]
+name = "consumer"
+path = "src/consumer.rs"

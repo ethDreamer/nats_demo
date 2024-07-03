@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    networks:
+      - nats-network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    networks:
+      - nats-network
+
+  producer:
+    build:
+      context: .
+    image: nats-demo
+    command: ["producer"]
+    environment:
+      - NATS_SUBJECT=test_sub
+      - NATS_SERVER=nats://nats:4222
+    depends_on:
+      - nats
+    networks:
+      - nats-network
+
+  consumer:
+    build:
+      context: .
+    image: nats-demo
+    command: ["consumer"]
+    environment:
+      - NATS_SUBJECT=test_sub
+      - NATS_SERVER=nats://nats:4222
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=mydb
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - nats
+      - postgres
+    networks:
+      - nats-network
+
+networks:
+  nats-network:
+    driver: bridge
